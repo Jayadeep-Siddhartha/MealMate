@@ -1,11 +1,18 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import Home from './pages/Home'
-import AppNavigator from './navigation/AppNavigator';
+import React from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { Provider } from "react-redux";
+import store from "./redux/store";
+import AppNavigator from "./navigation/AppNavigator"; // or your navigator file
+import { AuthProvider } from "./context/AuthContext";
+
 export default function App() {
   return (
-    <AppNavigator/>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <AuthProvider>
+        <Provider store={store}>
+          <AppNavigator />
+        </Provider>
+      </AuthProvider>
+    </GestureHandlerRootView>
   );
 }
-
-
