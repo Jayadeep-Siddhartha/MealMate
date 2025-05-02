@@ -13,6 +13,7 @@ const ReservationRoute = require('./routes/ReservationRoute');
 const PaymentRoute = require('./routes/PaymentRoute');
 const ReviewRoute = require('./routes/ReviewRoute');
 const RecommendationRoute = require('./routes/RecommendationRoute');
+const OrderRoute = require('./routes/OrderRoute');
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.use("/api/reservations", ReservationRoute);
 app.use("/api/recommendations", RecommendationRoute);
 app.use("/api/payments", PaymentRoute);
 app.use("/api/reviews", ReviewRoute);
+app.use("/api/orders", OrderRoute);
 
 app.get("/", (req, res) =>{
     res.send("Meal Mate API is running");

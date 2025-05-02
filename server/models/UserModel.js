@@ -7,7 +7,7 @@ email : String,
 phoneNumber : String,
 firebaseId : {type : String, unique : true, required : true},
 savedCafeterias : [{type : mongoose.Schema.Types.ObjectId, ref : "Cafeteria"}],
-preferences : [{type : mongoose.Schema.Types.ObjectId, ref : "FoodItems"}]
+preferences : [{type : mongoose.Schema.Types.ObjectId, ref : "Food"}]
 }, {timestamps : true})
 
 module.exports = mongoose.model("User", UserSchema);

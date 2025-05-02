@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const CafeteriaModel = require('./CafeteriaModel')
 
-const RecommendationModel = new mongoose.Schema({
+const RecommendationSchema = new mongoose.Schema({
     userId : {type : mongoose.Schema.Types.ObjectId, ref : "User"},
     recommendedFoods : [{
         foodId : {type : mongoose.Schema.Types.ObjectId, ref : "Food"},
@@ -20,4 +20,4 @@ const RecommendationModel = new mongoose.Schema({
     
 })
 
-module.exports = mongoose.model("Food", FoodSchema);
+module.exports = mongoose.model("Recommendation", RecommendationSchema);
