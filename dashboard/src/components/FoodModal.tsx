@@ -106,7 +106,7 @@ const FoodModal: React.FC<FoodModalProps> = ({ isOpen, onClose, onSubmit, defaul
                   value={form.foodName}
                   onChange={handleChange}
                   required
-                  className="w-full border border-amber-300 p-2 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                  className="w-full border border-amber-300 text-gray-800 p-2 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
                 />
               </div>
               
@@ -118,12 +118,12 @@ const FoodModal: React.FC<FoodModalProps> = ({ isOpen, onClose, onSubmit, defaul
                   name="price"
                   type="number"
                   min="0"
-                  step="0.01"
+                  step="1"
                   placeholder="0.00"
                   value={form.price}
                   onChange={handleChange}
                   required
-                  className="w-full border border-amber-300 p-2 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                  className="w-full border border-amber-300 text-gray-800 p-2 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
                 />
               </div>
               
@@ -137,7 +137,7 @@ const FoodModal: React.FC<FoodModalProps> = ({ isOpen, onClose, onSubmit, defaul
                   value={form.category}
                   onChange={handleChange}
                   required
-                  className="w-full border border-amber-300 p-2 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                  className="w-full border border-amber-300 text-gray-800 p-2 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
                 />
               </div>
               
@@ -153,7 +153,7 @@ const FoodModal: React.FC<FoodModalProps> = ({ isOpen, onClose, onSubmit, defaul
                   value={form.availability}
                   onChange={handleChange}
                   required
-                  className="w-full border border-amber-300 p-2 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                  className="w-full border border-amber-300 text-gray-800 p-2 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
                 />
               </div>
               

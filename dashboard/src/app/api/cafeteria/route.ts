@@ -23,12 +23,14 @@ export async function GET(req: Request) {
 export async function PUT(req: Request) {
   await dbConnect();
   const body = await req.json();
+  console.log("API received:", body);
+
   const {
     ownerId,
     cafeteriaName,
     location,
     availableSeats,
-    cafeImage,
+    cafeteriaImage,
   } = body;
 
   const owner = await CafeOwner.findOne({ firebaseId: ownerId });
@@ -36,25 +38,43 @@ export async function PUT(req: Request) {
     return NextResponse.json({ success: false, message: 'Owner not found' }, { status: 404 });
   }
 
-  const cafeteriaUpdates: any = {};
-  if (cafeteriaName !== undefined) cafeteriaUpdates.cafeteriaName = cafeteriaName;
-  if (location !== undefined) cafeteriaUpdates.location = location;
-  if (availableSeats !== undefined) cafeteriaUpdates.availableSeats = availableSeats;
-  if (cafeImage !== undefined) cafeteriaUpdates.cafeImage = cafeImage;
-
-  let cafeteria;
+  let updatedCafeteria;
 
   if (owner.cafeteria) {
-    cafeteria = await Cafeteria.findByIdAndUpdate(
-      owner.cafeteria,
-      { $set: cafeteriaUpdates },
-      { new: true }
-    );
+    const cafeteriaDoc = await Cafeteria.findById(owner.cafeteria);
+    if (!cafeteriaDoc) {
+      return NextResponse.json({ success: false, message: 'Cafeteria not found' }, { status: 404 });
+    }
+
+    console.log("Existing cafeteria doc before update:", cafeteriaDoc);
+
+    // ✅ Directly update fields
+    if (cafeteriaName !== undefined) cafeteriaDoc.cafeteriaName = cafeteriaName;
+    if (location !== undefined) cafeteriaDoc.location = location;
+    if (availableSeats !== undefined) cafeteriaDoc.availableSeats = availableSeats;
+    if (cafeteriaImage !== undefined) cafeteriaDoc.cafeteriaImage = cafeteriaImage;
+
+    console.log("Updating cafeteria with:", {
+      cafeteriaName: cafeteriaDoc.cafeteriaName,
+      location: cafeteriaDoc.location,
+      availableSeats: cafeteriaDoc.availableSeats,
+      cafeteriaImage: cafeteriaDoc.cafeteriaImage,
+    });
+
+    updatedCafeteria = await cafeteriaDoc.save(); // ✅ Explicit save
+
   } else {
-    cafeteria = await Cafeteria.create(cafeteriaUpdates);
-    owner.cafeteria = cafeteria._id;
+    // ✅ New cafeteria case
+    updatedCafeteria = await Cafeteria.create({
+      cafeteriaName,
+      location,
+      availableSeats,
+      cafeteriaImage,
+    });
+    owner.cafeteria = updatedCafeteria._id;
     await owner.save();
   }
 
-  return NextResponse.json({ success: true, cafeteria });
+  console.log("Updated cafeteria doc:", updatedCafeteria);
+  return NextResponse.json({ success: true, cafeteria: updatedCafeteria });
 }

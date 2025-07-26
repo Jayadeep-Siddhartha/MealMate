@@ -36,7 +36,7 @@ const AllRestaurantsScreen = () => {
         const { latitude, longitude } = userLoc.coords;
         
         console.log("Fetching started")
-        const response = await axios.get("http://192.168.56.1:5000/api/cafeterias/")
+        const response = await axios.get(`${process.env.EXPO_PUBLIC_API_BASE_URL}/api/cafeterias/`)
         console.log("Fetching ended")
         const cafesWithDistance = response.data.map((cafe) => {
           const distance = getDistance(

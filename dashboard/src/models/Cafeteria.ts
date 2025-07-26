@@ -8,7 +8,7 @@ export interface ICafeteria extends Document {
   availableSeats: number;
   rating: number;
   openStatus: boolean;
-  cafeImage?: string; // ✅ NEW
+  cafeteriaImage?: string; // ✅ NEW
 }
 
 const CafeteriaSchema = new Schema<ICafeteria>({
@@ -21,7 +21,7 @@ const CafeteriaSchema = new Schema<ICafeteria>({
   availableSeats: { type: Number, required: true },
   rating: { type: Number, default: 0 },
   openStatus: { type: Boolean, default: true },
-  cafeImage: String, // ✅ NEW
+  cafeteriaImage: String, // ✅ NEW
 }, { collection: 'Cafeterias' });
 
 export default models.Cafeteria || mongoose.model<ICafeteria>('Cafeteria', CafeteriaSchema);

@@ -1,4 +1,4 @@
-const { type } = require('@testing-library/user-event/dist/type');
+// const { type } = require('@testing-library/user-event/dist/type');
 const admin = require('firebase-admin');
 
 const { privateKey } = JSON.parse(process.env.FIREBASE_PRIVATE_KEY);

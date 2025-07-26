@@ -1,35 +1,44 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 const SignupPage = () => {
   const router = useRouter();
   const [form, setForm] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    upi: '',
-    password: '',
+    name: "",
+    email: "",
+    phone: "",
+    upi: "",
+    password: "",
   });
-  const [error, setError] = useState('');
+
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
+    setLoading(true);
+
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, form.email, form.password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        form.email,
+        form.password
+      );
       const uid = userCredential.user.uid;
 
-      const res = await fetch('/api/owners', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/owners", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           firebaseId: uid,
           name: form.name,
@@ -41,124 +50,152 @@ const SignupPage = () => {
 
       const data = await res.json();
       if (data.success) {
-        router.push('/dashboard/cafeteria?setup=true');
+        router.push("/dashboard/");
       } else {
-        setError(data.message || 'Failed to create owner in DB');
+        setError(data.message || "Failed to create owner in DB");
       }
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message || "Signup failed. Try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-50 to-amber-100 px-4">
-      <form onSubmit={handleSignup} className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md space-y-6 border border-amber-200">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-amber-800 mb-2">Create Your Cafe Account</h1>
-          <p className="text-amber-600">Start managing your cafe in minutes</p>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6 text-sm text-gray-800">
+      <form
+        onSubmit={handleSignup}
+        className="w-full max-w-sm border border-gray-200 bg-white p-6 space-y-6"
+      >
+        <div className="space-y-1">
+          <h1 className="text-xl font-semibold text-gray-900">
+            Create Account
+          </h1>
+          <p className="text-gray-600">Manage your cafe effortlessly</p>
         </div>
-        
+
         {error && (
-          <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded">
-            <p className="text-red-700 font-medium">{error}</p>
+          <div className="border-l-2 border-red-500 bg-red-50 px-3 py-2 text-sm text-red-700">
+            {error}
           </div>
         )}
 
-        <div className="space-y-5">
+        <div className="space-y-4">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-amber-800 mb-1">
+            <label
+              htmlFor="name"
+              className="block mb-1 font-medium text-gray-700"
+            >
               Full Name
             </label>
-            <input 
+            <input
               id="name"
-              name="name" 
-              placeholder="Your full name" 
-              onChange={handleChange} 
-              value={form.name}
-              className="w-full border border-amber-200 px-4 py-3 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition bg-amber-50 placeholder-amber-300 text-amber-800" 
-              required 
+              name="name"
+              value={form.name || ""}
+              onChange={handleChange}
+              placeholder="Your full name"
+              disabled={loading}
+              required
+              className="w-full border border-gray-200 px-3 py-2 bg-gray-50 text-gray-800 focus:outline-none focus:ring-amber-500 focus:border-amber-500"
             />
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-amber-800 mb-1">
+            <label
+              htmlFor="email"
+              className="block mb-1 font-medium text-gray-700"
+            >
               Email Address
             </label>
-            <input 
+            <input
               id="email"
-              name="email" 
-              type="email" 
-              placeholder="your@email.com" 
-              onChange={handleChange} 
-              value={form.email}
-              className="w-full border border-amber-200 px-4 py-3 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition bg-amber-50 placeholder-amber-300 text-amber-800" 
-              required 
+              name="email"
+              type="email"
+              value={form.email || ""}
+              onChange={handleChange}
+              placeholder="your@email.com"
+              disabled={loading}
+              required
+              className="w-full border border-gray-200 px-3 py-2 bg-gray-50 text-gray-800 focus:outline-none focus:ring-amber-500 focus:border-amber-500"
             />
           </div>
 
           <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-amber-800 mb-1">
+            <label
+              htmlFor="phone"
+              className="block mb-1 font-medium text-gray-700"
+            >
               Phone Number
             </label>
-            <input 
+            <input
               id="phone"
-              name="phone" 
-              type="tel" 
-              placeholder="+91 9876543210" 
-              onChange={handleChange} 
-              value={form.phone}
-              className="w-full border border-amber-200 px-4 py-3 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition bg-amber-50 placeholder-amber-300 text-amber-800" 
+              name="phone"
+              type="tel"
+              value={form.phone || ""}
+              onChange={handleChange}
+              placeholder="+91 9876543210"
+              disabled={loading}
+              className="w-full border border-gray-200 px-3 py-2 bg-gray-50 text-gray-800 focus:outline-none focus:ring-amber-500 focus:border-amber-500"
             />
           </div>
 
           <div>
-            <label htmlFor="upi" className="block text-sm font-medium text-amber-800 mb-1">
+            <label
+              htmlFor="upi"
+              className="block mb-1 font-medium text-gray-700"
+            >
               UPI ID
             </label>
-            <input 
+            <input
               id="upi"
-              name="upi" 
-              placeholder="yourname@upi" 
-              onChange={handleChange} 
-              value={form.upi}
-              className="w-full border border-amber-200 px-4 py-3 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition bg-amber-50 placeholder-amber-300 text-amber-800" 
+              name="upi"
+              value={form.upi || ""}
+              onChange={handleChange}
+              placeholder="yourname@upi"
+              disabled={loading}
+              className="w-full border border-gray-200 px-3 py-2 bg-gray-50 text-gray-800 focus:outline-none focus:ring-amber-500 focus:border-amber-500"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-amber-800 mb-1">
+            <label
+              htmlFor="password"
+              className="block mb-1 font-medium text-gray-700"
+            >
               Password
             </label>
-            <input 
+            <input
               id="password"
-              name="password" 
-              type="password" 
-              placeholder="••••••••" 
-              onChange={handleChange} 
-              value={form.password}
-              className="w-full border border-amber-200 px-4 py-3 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition bg-amber-50 placeholder-amber-300 text-amber-800" 
-              required 
+              name="password"
+              type="password"
+              value={form.password || ""}
+              onChange={handleChange}
+              placeholder="••••••••"
+              disabled={loading}
+              required
+              className="w-full border border-gray-200 px-3 py-2 bg-gray-50 text-gray-800 focus:outline-none focus:ring-amber-500 focus:border-amber-500"
             />
           </div>
         </div>
 
-        <button 
-          type="submit" 
-          className="w-full bg-amber-600 text-white py-3 rounded-lg hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transition font-medium shadow-md hover:shadow-amber-200"
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-amber-600 text-white py-2 font-medium hover:bg-amber-700 hover:cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-500 disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2"
         >
-          Create Account
+          {loading ? "Creating Account..." : "Create Account"}
         </button>
 
-        <div className="text-center text-sm text-amber-600">
-          <p>Already have an account?{' '}
-            <button 
-              type="button"
-              onClick={() => router.push('/auth/login')}
-              className="font-medium text-amber-700 hover:underline focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-1 rounded px-1"
-            >
-              Login here
-            </button>
-          </p>
+        <div className="text-center text-gray-600">
+          Already have an account?{" "}
+          <button
+            type="button"
+            onClick={() => router.push("/auth/login")}
+            disabled={loading}
+            className="text-amber-700 hover:underline hover:cursor-pointer font-medium"
+          >
+            Login here
+          </button>
         </div>
       </form>
     </div>

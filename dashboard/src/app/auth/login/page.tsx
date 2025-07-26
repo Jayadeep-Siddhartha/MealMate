@@ -1,14 +1,15 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 const LoginPage = () => {
   const router = useRouter();
   const [form, setForm] = useState({ email: '', password: '' });
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -16,82 +17,101 @@ const LoginPage = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
+    setLoading(true);
     try {
       await signInWithEmailAndPassword(auth, form.email, form.password);
-      router.push('/dashboard/cafeteria');
+      router.push("/dashboard/");
     } catch (err: any) {
-      setError('Login failed: ' + err.message);
+      setError("Login failed: " + err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleSignUpRedirect = () => {
-    router.push('/auth/signup');
+    router.push("/auth/signup");
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-50 to-amber-100 px-4">
-      <form onSubmit={handleLogin} className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md space-y-6 border border-amber-200">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-amber-800 mb-2">Cafe Owner Login</h1>
-          <p className="text-amber-600">Welcome back to your cafe dashboard</p>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6 text-sm text-gray-800">
+      <form
+        onSubmit={handleLogin}
+        className="w-full max-w-sm border border-gray-200 bg-white p-6 space-y-6"
+      >
+        <div className="space-y-1">
+          <h1 className="text-xl font-semibold text-gray-900">
+            Cafe Owner Login
+          </h1>
+          <p className="text-gray-600">Welcome back to your dashboard</p>
         </div>
-        
+
         {error && (
-          <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded">
-            <p className="text-red-700 font-medium">{error}</p>
+          <div className="border-l-2 border-red-500 bg-red-50 px-3 py-2 text-sm text-red-700">
+            {error}
           </div>
         )}
 
-        <div className="space-y-5">
+        <div className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-amber-800 mb-1">
-              Email Address
+            <label
+              htmlFor="email"
+              className="block mb-1 font-medium text-gray-700"
+            >
+              Email
             </label>
-            <input 
+            <input
               id="email"
-              name="email" 
-              type="email" 
-              placeholder="your@email.com" 
-              onChange={handleChange} 
-              className="w-full border border-amber-200 px-4 py-3 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition bg-amber-50 placeholder-amber-300 text-amber-800" 
-              required 
+              name="email"
+              type="email"
+              value={form.email}
+              onChange={handleChange}
+              placeholder="you@example.com"
+              disabled={loading}
+              required
+              className="w-full border border-gray-200 px-3 py-2 bg-gray-50 text-gray-800 focus:outline-none focus:ring-amber-500 focus:border-amber-500"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-amber-800 mb-1">
+            <label
+              htmlFor="password"
+              className="block mb-1 font-medium text-gray-700"
+            >
               Password
             </label>
-            <input 
+            <input
               id="password"
-              name="password" 
-              type="password" 
-              placeholder="••••••••" 
-              onChange={handleChange} 
-              className="w-full border border-amber-200 px-4 py-3 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition bg-amber-50 placeholder-amber-300 text-amber-800" 
-              required 
+              name="password"
+              type="password"
+              value={form.password}
+              onChange={handleChange}
+              placeholder="••••••••"
+              disabled={loading}
+              required
+              className="w-full border border-gray-200 px-3 py-2 bg-gray-50 text-gray-800 focus:outline-none focus:ring-amber-500 focus:border-amber-500"
             />
           </div>
         </div>
 
-        <button 
-          type="submit" 
-          className="w-full bg-amber-600 text-white py-3 rounded-lg hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transition font-medium shadow-md hover:shadow-amber-200"
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-amber-600 text-white py-2 font-medium hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2"
         >
-          Sign In
+          {loading ? "Signing In..." : "Sign In"}
         </button>
 
-        <div className="text-center text-sm text-amber-600">
-          <p>New cafe owner?{' '}
-            <button 
-              type="button"
-              onClick={handleSignUpRedirect}
-              className="font-medium text-amber-700 hover:underline focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-1 rounded px-1"
-            >
-              Sign up here
-            </button>
-          </p>
+        <div className="text-center text-gray-600">
+          New cafe owner?{" "}
+          <button
+            type="button"
+            onClick={handleSignUpRedirect}
+            className="text-amber-700 hover:underline font-medium"
+            disabled={loading}
+          >
+            Sign up here
+          </button>
         </div>
       </form>
     </div>
